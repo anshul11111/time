@@ -1,170 +1,256 @@
+/* ============================================================
+   Sakura Clock — styles
+   Layout, neon ring theming, responsive scaling, motion prefs.
+   ============================================================ */
 
-canvas {
-    
-    margin:0;
-    padding:0;
+:root {
+    --ring: 150px;          /* diameter of each clock ring          */
+    --gap: 40px;            /* vertical space between rings         */
+    --bg: #05030a;          /* fallback behind the WebGL canvas     */
+    --track: #191919;       /* unfilled part of each ring           */
+    --font: 'Poppins', system-ui, -apple-system, 'Segoe UI', sans-serif;
 }
-div.btnbg {
-    box-sizing:border-box;
-    position:fixed;
-    margin:0;
-    padding:0;
 
+/* --- reset ------------------------------------------------ */
+*,
+*::before,
+*::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
-
-
-
-
-
-
-@import url('https://fonts.googleapis.com/css2?family=Poppins:200,300,400,500,600,700,800,900&display=swap');
-*
-{
-
-
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family: 'poppins' , sans-serif;
+html,
+body {
+    height: 100%;
 }
-#time
-{
-    
-    display: flex;
-    gap: 40px;
-    color: transparent;
-    
- 
-    flex-direction: column;
-   
-  }
-#time:hover
-{
-    transition-delay: 0.1s;
-    transition-duration: 0.2s;
-    transition-timing-function: cubic-bezier( 0.13, 0.64, 0.26, 0.01 );
-    color: white;
-}
-body
-{
-    display: flex;
-    justify-content: center;
-    align-items: center;
+
+body {
     min-height: 100vh;
-    flex-direction:column;
-    background:transparent;
-}
-
-
-
-.circle
-{   transition-delay: 0.1s;
-    transition-duration: 0.2s;
-    transition-timing-function: cubic-bezier( 0.13, 0.64, 0.26, 0.01 );
-}
-
-
-
-
-.circle:hover
-{
-    color:var(--clr);
-    text-shadow: 0 0 10px var(--clr), 0 0 90px var(--clr), 0 0 80px var(--clr), 0 0 70px var(--clr),
-    0 0 60px var(--clr), 0 0 50px var(--clr), 0 0 40px var(--clr);
-    border-radius: 100%;
-    box-shadow: 0 0 100px var(--clr),
-    0 0 40px var(--clr),0 0 40px var(--clr);
-}
-
-#time .circle
-{
-    position: relative;
-    width: auto;
-    height: auto;
-    background: black;
-    border-radius: 100%;
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
+    overflow-x: hidden;
+    background: var(--bg);
+    color: #fff;
+    font-family: var(--font);
 }
-#time .circle svg
-{
-position: relative;
-width:150px;
-height: 150px;
-transform: rotate(270deg);
-}
-#time .circle svg circle 
-{
+
+/* --- WebGL background ------------------------------------- */
+#sakura {
+    position: fixed;
+    inset: 0;
     width: 100%;
     height: 100%;
-    fill: transparent;
-    stroke: #191919;
-    stroke-width: 4;
-    transform: translate(5px,5px);
+    display: block;
+    z-index: 0;
+    pointer-events: none;
 }
-#time .circle svg circle:nth-child(2)
-{
-   
+
+/* --- clock layout ----------------------------------------- */
+.clock-shell {
+    position: relative;
+    z-index: 1;
+}
+
+#time {
+    display: flex;
+    flex-direction: column;
+    gap: var(--gap);
+    color: transparent;
+    cursor: pointer;
+    outline: none;
+    transition: color 0.25s ease;
+    -webkit-tap-highlight-color: transparent;
+}
+
+#time:hover,
+#time.is-revealed {
+    color: #fff;
+}
+
+#time:focus-visible {
+    outline: 2px solid #00ff0d;
+    outline-offset: 14px;
+    border-radius: 50%;
+}
+
+/* --- rings ------------------------------------------------ */
+#time .circle {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: auto;
+    height: auto;
+    background: #000;
+    border-radius: 50%;
+    transition: color 0.2s cubic-bezier(0.13, 0.64, 0.26, 0.01),
+                box-shadow 0.2s cubic-bezier(0.13, 0.64, 0.26, 0.01);
+}
+
+#time .circle:hover {
+    color: var(--clr);
+    text-shadow: 0 0 10px var(--clr),
+                 0 0 40px var(--clr),
+                 0 0 70px var(--clr);
+    box-shadow: 0 0 100px var(--clr),
+                0 0 40px var(--clr);
+}
+
+#time .circle svg {
+    position: relative;
+    display: block;
+    width: var(--ring);
+    height: var(--ring);
+    transform: rotate(270deg);
+}
+
+#time .circle svg circle {
+    fill: transparent;
+    stroke: var(--track);
+    stroke-width: 4;
+    transform: translate(5px, 5px);
+}
+
+#time .circle svg circle:nth-child(2) {
     stroke: var(--clr);
     stroke-dasharray: 440;
-    
-
+    transition: stroke-dashoffset 0.45s ease;
 }
 
-
-#time div 
-{
+/* --- readouts --------------------------------------------- */
+#time .readout {
     position: absolute;
     text-align: center;
     font-weight: 500;
-    font-size: 1.5em;
-}
-#time div span
-{
-position: absolute;
-transform: translateX(-29px) translateY(-5px);
-font-size: 0.35em; 
-font-weight: 300;
-letter-spacing: 0.1em;
-text-transform: uppercase;
-}
-#time .ap
-{
-    position: relative;
-    font-size: 2em;
-    transform: translateX(40px);
-    transition-delay: 0.1s;
-    transition-duration: 0.2s;
-}
-#time .ap:hover{
-    color:var(--clr);
-    text-shadow: 0 0 10px var(--clr), 0 0 90px var(--clr), 0 0 80px var(--clr), 0 0 70px black;
-    border-radius: 100%;
-    box-shadow: 0 0 100px var(--clr),
-    0 0 40px var(--clr),0 0 40px var(--clr);
+    font-size: calc(var(--ring) * 0.16);
+    line-height: 1.15;
 }
 
-.dots
-{
+#time .readout span {
     position: absolute;
-    width: 100%;
-    height: 100%;
+    transform: translate(calc(var(--ring) * -0.193),
+                         calc(var(--ring) * -0.033));
+    font-size: 0.35em;
+    font-weight: 300;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+#time .ap {
+    position: relative;
+    align-self: center;
+    font-size: calc(var(--ring) * 0.2);
+    transform: translateX(calc(var(--ring) * 0.27));
+    transition: color 0.2s ease;
+}
+
+#time .ap:hover {
+    color: var(--clr);
+    text-shadow: 0 0 10px var(--clr),
+                 0 0 40px var(--clr);
+}
+
+/* --- ticking dots ----------------------------------------- */
+.dots {
+    position: absolute;
+    inset: 0;
     z-index: 10;
     display: flex;
     justify-content: center;
-
+    transition: transform 0.45s ease;
 }
-.dots::before
-{
+
+.dots::before {
     content: '';
     position: absolute;
-    top: -3px;
-    width: 15px;
-    height: 15px;
-    background:var(--clr) ;
+    top: calc(var(--ring) * -0.02);
+    width: calc(var(--ring) * 0.1);
+    height: calc(var(--ring) * 0.1);
+    background: var(--clr);
     border-radius: 50%;
-   box-shadow: 0 0 20px var(--clr),
-   0 0 60px var(--clr);
+    box-shadow: 0 0 20px var(--clr),
+                0 0 60px var(--clr);
+}
+
+/* --- hint toast ------------------------------------------- */
+.hint {
+    position: fixed;
+    left: 50%;
+    bottom: clamp(16px, 4vh, 40px);
+    z-index: 2;
+    transform: translateX(-50%);
+    padding: 0.6em 1.1em;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    color: rgba(255, 255, 255, 0.85);
+    font-size: clamp(0.75rem, 2.5vw, 0.9rem);
+    font-weight: 300;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    pointer-events: none;
+    animation: hint-fade 6s ease forwards;
+}
+
+.hint.is-static {
+    animation: none;
+    opacity: 1;
+}
+
+@keyframes hint-fade {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, 8px);
+    }
+    10%,
+    80% {
+        opacity: 1;
+        transform: translate(-50%, 0);
+    }
+    100% {
+        opacity: 0;
+        transform: translate(-50%, 8px);
+    }
+}
+
+/* --- responsive ------------------------------------------- */
+@media (max-width: 600px) {
+    :root {
+        --ring: 100px;
+        --gap: 24px;
+    }
+}
+
+@media (max-width: 380px) {
+    :root {
+        --ring: 84px;
+        --gap: 18px;
+    }
+}
+
+/* Short landscape screens (phones rotated, small laptops). */
+@media (max-height: 620px) and (min-width: 601px) {
+    :root {
+        --ring: 110px;
+        --gap: 24px;
+    }
+}
+
+/* --- reduced motion --------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+    #time .circle svg circle:nth-child(2),
+    .dots {
+        transition: none;
+    }
+
+    .hint {
+        animation: none;
+        opacity: 1;
+    }
 }
