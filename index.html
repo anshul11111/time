@@ -1,55 +1,55 @@
 <!DOCTYPE html>
-<html lang="en" >
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>time </title>
-    <link rel = "stylesheet" href ="style.css">
-  
-
+    <meta name="description" content="Sakura Clock — a live analog/digital clock over an animated cherry-blossom WebGL background.">
+    <meta name="theme-color" content="#05030a">
+    <title>Sakura Clock</title>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='13' fill='none' stroke='%2300ff0d' stroke-width='3'/%3E%3Ccircle cx='16' cy='16' r='4' fill='%23d72222'/%3E%3C/svg%3E">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <canvas id="sakura" aria-hidden="true"></canvas>
 
+    <main class="clock-shell">
+        <div id="time" role="timer" aria-label="Current time" tabindex="0">
+            <div class="circle" style="--clr:#00ff0d">
+                <div class="dots hr_dot" aria-hidden="true"></div>
+                <svg viewBox="0 0 150 150" aria-hidden="true" focusable="false">
+                    <circle cx="70" cy="70" r="70"></circle>
+                    <circle cx="70" cy="70" r="70" id="hh"></circle>
+                </svg>
+                <div id="hours" class="readout">00<br><span>Hours</span></div>
+            </div>
+            <div class="circle" style="--clr:#0040ff">
+                <div class="dots min_dot" aria-hidden="true"></div>
+                <svg viewBox="0 0 150 150" aria-hidden="true" focusable="false">
+                    <circle cx="70" cy="70" r="70"></circle>
+                    <circle cx="70" cy="70" r="70" id="mm"></circle>
+                </svg>
+                <div id="minutes" class="readout">00<br><span>Minutes</span></div>
+            </div>
+            <div class="circle" style="--clr:#d72222">
+                <div class="dots sec_dot" aria-hidden="true"></div>
+                <svg viewBox="0 0 150 150" aria-hidden="true" focusable="false">
+                    <circle cx="70" cy="70" r="70"></circle>
+                    <circle cx="70" cy="70" r="70" id="ss"></circle>
+                </svg>
+                <div id="seconds" class="readout">00<br><span>Seconds</span></div>
+            </div>
+            <div class="ap" style="--clr:darkorange">
+                <div id="ampm">AM</div>
+            </div>
+        </div>
+    </main>
 
-<!-- partial:index.partial.html -->
-<canvas id="sakura">
-    
-</canvas>
+    <p id="hint" class="hint" role="status">Hover or tap a ring to reveal the time</p>
 
-<div class="btnbg">
-    <div id = "time">
-        <div class = "circle" style  = "--clr:#00ff0d">
-            <div class = "dots hr_dot"></div>
-            <svg>
-                <circle cx ="70" cy ="70" r = "70"></circle>
-                <circle cx ="70" cy ="70" r = "70" id = "hh"></circle>
-            </svg>
-            <div id = "hours">00</div>
-        </div>
-        <div class = "circle" style  = "--clr: #0040FF">
-            <div class = "dots min_dot"></div>
-            <svg>
-                <circle cx ="70" cy ="70" r = "70"></circle>
-                <circle cx ="70" cy ="70" r = "70" id = "mm"></circle>
-            </svg>
-            <div id = "minutes">00</div>
-        </div>
-        <div class = "circle" style  = "--clr:#d72222">
-            <div class = "dots sec_dot"></div>
-            <svg>
-                <circle cx ="70" cy ="70" r = "70"></circle>
-                <circle cx ="70" cy ="70" r = "70"id = "ss"></circle>
-            </svg>
-            <div id = "seconds">00</div>
-        </div>
-        <div class = "ap" style  = "--clr: darkorange" >
-            <div id = "ampm">AM</div>
-        </div>
-    </div>
-</div>
-
-<!-- sakura shader -->
+    <!-- sakura shaders -->
 <script id="sakura_point_vsh" type="x-shader/x_vertex">
 uniform mat4 uProjection;
 uniform mat4 uModelview;
@@ -335,57 +335,7 @@ void main(void) {
     gl_FragColor.a = 1.0;
 }
 </script>
-<!-- partial -->
-  <script  src="./script.js"></script>
-<script>
-window.alert("HOVER/TAP OVER ANY CIRCLE TO SEE TIME \n CREATED BY ME");
-</script>
-<script>
-    
-    
-    setInterval(() => {
-        let hours = document.getElementById('hours');
-        let minutes = document.getElementById('minutes');
-        let seconds = document.getElementById('seconds');
-        let ampm = document.getElementById('ampm');
-        
-        
-        let hr_dot = document.querySelector('.hr_dot');
-        let min_dot = document.querySelector('.min_dot');
-        let sec_dot = document.querySelector('.sec_dot');    
-        
-        let hh = document.getElementById('hh');
-        let mm = document.getElementById('mm');
-        let ss = document.getElementById('ss');
-
-        let h = new Date().getHours();
-        let m = new Date().getMinutes();
-        let s = new Date().getSeconds();
-        let am = h >= 12 ? "PM" : "AM";
-      
-        if (h>12){
-            h = h -12;
-        }
-        
-        h = (h<10) ? "0" + h : h;
-        m = (m<10) ? "0" + m : m;
-        s = (s<10) ? "0" + s : s;
-        hours.innerHTML = h + "<br><span>Hours<span>";
-        minutes.innerHTML = m + "<br><span>Minutes<span>";
-        seconds.innerHTML = s+ "<br><span>Seconds<span>";
-        ampm.innerHTML = am;  
-        
-        hh.style.strokeDashoffset = 440 - (400*h) / 12;
-    mm.style.strokeDashoffset = 440 - (450*m) / 60;
-    ss.style.strokeDashoffset = 440 - (450*s) / 60;
-  
-    hr_dot.style.transform = `rotate(${h*27.9}deg)`;
-    min_dot.style.transform = `rotate(${m*6.1}deg)`;
-    sec_dot.style.transform = `rotate(${s*6.1}deg)`;
-    
-} )
-   
-
-</script>
+    <script src="./script.js"></script>
+    <script src="./clock.js"></script>
 </body>
 </html>
